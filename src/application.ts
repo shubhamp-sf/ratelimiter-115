@@ -42,6 +42,9 @@ export class RatelimiterIssueReproductionApp extends BootMixin(
       type: 'RedisStore',
       max: 5,
       windowMs: 50000,
+      skip: (request, response) => {
+        return !!request.path.match(/\/obf\/.+/gm);
+      },
     });
 
     this.bind(AuthorizationBindings.CONFIG).to({
