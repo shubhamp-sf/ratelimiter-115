@@ -37,13 +37,17 @@ export class RatelimiterIssueReproductionApp extends BootMixin(
     });
     this.component(RestExplorerComponent);
 
+    const obfPath = process.env.OBF_PATH ?? '/obf';
     this.bind(RateLimitSecurityBindings.CONFIG).to({
       name: RedisDataSource.dataSourceName,
       type: 'RedisStore',
       max: 5,
       windowMs: 50000,
       skip: (request, response) => {
-        return !!request.path.match(/\/obf\/.+/gm);
+        const isOBFSubpath = Boolean(
+          request.path.match(new RegExp(`^/${obfPath.replace(/^\//, '')}/.+`)),
+        );
+        return !!isOBFSubpath;
       },
     });
 
